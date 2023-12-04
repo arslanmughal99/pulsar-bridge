@@ -57,6 +57,6 @@ curl --location 'localhost:3000/produce' --header 'Content-Type: application/jso
 
 ```json
 {
-	"total": 4 # Total number of messages published
+	"total": 4
 }
 ```
