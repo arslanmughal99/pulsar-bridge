@@ -7,15 +7,14 @@ import (
 	"sync"
 	"time"
 
-	"github.com/apache/pulsar-client-go/pulsar"
 	"github.com/joho/godotenv"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
 )
 
 var (
-	_             = godotenv.Load()
-	tnxTimeout, _ = strconv.ParseInt(os.Getenv("TNX_TIMEOUT_SEC"), 10, 64)
+	_                = godotenv.Load()
+	tnxTimeout int64 = 10
 )
 
 // Service instance
@@ -25,6 +24,14 @@ type Service struct {
 
 // NewService create new instance of Service
 func NewService(client *Connection) *Service {
+	tt, err := strconv.ParseInt(os.Getenv("TNX_TIMEOUT_SEC"), 10, 64)
+
+	if err != nil {
+		log.Panic().Err(err).Msg("failed to parse transaction timeout.")
+	}
+
+	tnxTimeout = tt
+
 	s := new(Service)
 	s.client = client
 	return s
@@ -41,11 +48,15 @@ func (s *Service) ProduceMessagesTnx(dto *ProducerRequestDto) (*uint, error) {
 	total := new(uint)
 	errch := make(chan error)
 
-	var tnx pulsar.Transaction
-
+createTnx:
 	tnx, err := s.client.con.NewTransaction(time.Second * time.Duration(tnxTimeout))
-
 	if err != nil {
+		if err.Error() == "connection closed" {
+			log.Warn().Err(err).Msg("connection dropped re-attempting to connect")
+			s.client.Connect()
+			goto createTnx
+		}
+
 		log.
 			Error().
 			Err(err).

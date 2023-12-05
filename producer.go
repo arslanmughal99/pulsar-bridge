@@ -5,6 +5,7 @@ import (
 	"os"
 	"strconv"
 	"sync"
+	"time"
 
 	"github.com/apache/pulsar-client-go/pulsar"
 	"github.com/joho/godotenv"
@@ -109,7 +110,7 @@ func NewTopicProducer(opt *TopicProducerOptions) (*TopicProducer, error) {
 	}
 
 	p, err := opt.Client.CreateProducer(pulsar.ProducerOptions{
-		BatchingMaxPublishDelay: 0,
+		BatchingMaxPublishDelay: time.Duration(0),
 		Topic:                   opt.Topic,
 		BatchingMaxSize:         uint(batchMaxSize),
 		MaxPendingMessages:      int(maxPendingMsgs),

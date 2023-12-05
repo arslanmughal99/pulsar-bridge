@@ -35,6 +35,7 @@ func main() {
 
 	r := chi.NewRouter()
 	r.Use(middleware.Recoverer)
+	r.Use(middleware.Logger)
 	r.Post("/produce", handlers.HandleProduceRequest)
 
 	log.Info().Str("port", port).Msg("server started")
