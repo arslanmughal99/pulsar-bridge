@@ -19,7 +19,7 @@ FROM alpine
 # Init for PID=host
 COPY --from=builder /build/app /app
 
-RUN apk add dumb-init
-ENTRYPOINT ["/usr/bin/dumb-init", "--"]
+#RUN apk add dumb-init
+#ENTRYPOINT ["/usr/bin/dumb-init", "--"]
 
 CMD ["sh", "-c", "/app"]

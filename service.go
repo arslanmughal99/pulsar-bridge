@@ -2,6 +2,8 @@ package main
 
 import (
 	"context"
+	"os"
+	"strconv"
 	"sync"
 	"time"
 
@@ -12,7 +14,8 @@ import (
 )
 
 var (
-	_ = godotenv.Load()
+	_             = godotenv.Load()
+	tnxTimeout, _ = strconv.ParseInt(os.Getenv("TNX_TIMEOUT_SEC"), 10, 64)
 )
 
 // Service instance
@@ -40,7 +43,7 @@ func (s *Service) ProduceMessagesTnx(dto *ProducerRequestDto) (*uint, error) {
 
 	var tnx pulsar.Transaction
 
-	tnx, err := s.client.con.NewTransaction(time.Second * 100)
+	tnx, err := s.client.con.NewTransaction(time.Second * time.Duration(tnxTimeout))
 
 	if err != nil {
 		log.
