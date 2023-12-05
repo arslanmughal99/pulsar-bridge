@@ -2,18 +2,19 @@
 Apache Pulsar http bridge gives a simple api to produce messages to multiple topics with single transaction .
 
 ## Configurations
-Following enviroment variables can be set to configure .
+Following environment variables can be set to configure .
 
-|VARIABLE|DESCRIPTION|
-| ------------ | ------------ |
-|PORT|Server port to listen|
-|LOG_LEVEL|[zerolog](https://github.com/rs/zerolog/blob/7fa45a4dda359d9a657a2960078097415417ec73/log.go#L127 "zerolog") Log levels|
-|PULSAR_CLIENT_TIMEOUT_SEC|Timeout for pulsar client|
-|PULSAR_OPERATION_TIMEOUT_SEC|pulsar publisher execution timeout|
-|PULSAR_BROKERS|List of pulsar brokers comma seperated e.g: ip:port[,ip:port]|
-|TNX_TIMEOUT_SEC|Transaction timeout|
-|MAX_PENDING_MSGS|Max queue size for publisher|
-|BATCHING_MAX_SIZE|Max bytes permited in a batch|
+| VARIABLE                     | DESCRIPTION                                                                                                             |
+|------------------------------|-------------------------------------------------------------------------------------------------------------------------|
+| PORT                         | Server port to listen                                                                                                   |
+| DISABLE_PULSAR_LOGS          | Disable logging for pulsar client if set to "yes"                                                                       |
+| LOG_LEVEL                    | [zerolog](https://github.com/rs/zerolog/blob/7fa45a4dda359d9a657a2960078097415417ec73/log.go#L127 "zerolog") Log levels |
+| PULSAR_CLIENT_TIMEOUT_SEC    | Timeout for pulsar client                                                                                               |
+| PULSAR_OPERATION_TIMEOUT_SEC | pulsar publisher execution timeout                                                                                      |
+| PULSAR_BROKERS               | List of pulsar brokers comma seperated e.g: ip:port[,ip:port]                                                           |
+| TNX_TIMEOUT_SEC              | Transaction timeout                                                                                                     |
+| MAX_PENDING_MSGS             | Max queue size for publisher                                                                                            |
+| BATCHING_MAX_SIZE            | Max bytes permitted in a batch                                                                                          |
 
 ## Usage
 

@@ -5,6 +5,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -14,13 +15,16 @@ import (
 )
 
 var (
-	_    = godotenv.Load()
-	port = os.Getenv("PORT")
+	_                 = godotenv.Load()
+	port              = os.Getenv("PORT")
+	disablePulsarLogs = os.Getenv("DISABLE_PULSAR_LOGS")
 )
 
 func main() {
 	initLogger()
-	logrus.SetOutput(io.Discard)
+	if strings.ToLower(disablePulsarLogs) == "yes" {
+		logrus.SetOutput(io.Discard)
+	}
 
 	conn := NewConnection()
 	conn.Connect()
