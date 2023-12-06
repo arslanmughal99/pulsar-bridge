@@ -24,6 +24,7 @@ func (h *Handlers) HandleProduceRequest(w http.ResponseWriter, r *http.Request) 
 	if err := render.Bind(r, dto); err != nil {
 		_, _ = w.Write([]byte("something went wrong"))
 		w.WriteHeader(http.StatusInternalServerError)
+		return
 	}
 
 	dtoErrs := ValidateDto(dto)
