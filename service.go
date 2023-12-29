@@ -74,8 +74,8 @@ createTnx:
 				&TopicProducerOptions{
 					Trx:    tnx,
 					ErrCh:  errch,
-					Client: s.client.con,
 					Topic:  tpm.Topic,
+					Client: s.client.con,
 				},
 			)
 			if err != nil {

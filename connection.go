@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"sync"
 	"time"
 
 	"github.com/apache/pulsar-client-go/pulsar"
@@ -20,12 +21,15 @@ var (
 
 // Connection instance
 type Connection struct {
+	//lock *sync.Cond
+	sync.Mutex
 	con pulsar.Client
 }
 
 // NewConnection create a new connection instance
 func NewConnection() *Connection {
 	conn := new(Connection)
+	//conn.lock = sync.NewCond(&sync.Mutex{})
 	conn.Connect()
 	return conn
 }
@@ -42,10 +46,12 @@ func (c *Connection) Close() {
 
 // Connect connect pulsar client
 func (c *Connection) Connect() {
+	c.Lock()
+	defer c.Unlock()
 	clientOpt := pulsar.ClientOptions{
-		EnableTransaction:       true,
 		ConnectionMaxIdleTime:   -1,
 		MaxConnectionsPerBroker: 50,
+		EnableTransaction:       true,
 		KeepAliveInterval:       time.Second * 5,
 		URL:                     fmt.Sprintf("pulsar://%s", brokers),
 	}

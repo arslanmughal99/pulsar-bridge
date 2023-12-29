@@ -51,7 +51,7 @@ func (tp *TopicProducer) Close() {
 }
 
 // SendMessages publish messages
-func (tp *TopicProducer) SendMessages(msgs []MessagePayload) {
+func (tp *TopicProducer) SendMessages(msgs []string) {
 	wg := sync.WaitGroup{}
 	ctx, cancel := context.WithCancelCause(context.Background())
 	defer tp.Close()
@@ -61,11 +61,8 @@ func (tp *TopicProducer) SendMessages(msgs []MessagePayload) {
 		tp.Producer.SendAsync(
 			ctx,
 			&pulsar.ProducerMessage{
-				Key:         m.Key,
+				Payload:     []byte(m),
 				Transaction: tp.trx,
-				Properties:  m.Properties,
-				OrderingKey: m.OrderingKey,
-				Payload:     []byte(m.Payload),
 			},
 			func(id pulsar.MessageID, message *pulsar.ProducerMessage, err error) {
 				defer wg.Done()
@@ -110,10 +107,10 @@ func NewTopicProducer(opt *TopicProducerOptions) (*TopicProducer, error) {
 	}
 
 	p, err := opt.Client.CreateProducer(pulsar.ProducerOptions{
-		BatchingMaxPublishDelay: time.Duration(0),
 		Topic:                   opt.Topic,
 		BatchingMaxSize:         uint(batchMaxSize),
 		MaxPendingMessages:      int(maxPendingMsgs),
+		BatchingMaxPublishDelay: time.Duration(0),
 	})
 	if err != nil {
 		log.
@@ -125,9 +122,9 @@ func NewTopicProducer(opt *TopicProducerOptions) (*TopicProducer, error) {
 	}
 
 	tp := new(TopicProducer)
-	tp.errch = opt.ErrCh
 	tp.Producer = p
 	tp.trx = opt.Trx
+	tp.errch = opt.ErrCh
 	tp.topic = opt.Topic
 
 	return tp, nil

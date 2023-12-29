@@ -30,24 +30,16 @@ curl --location 'localhost:3000/produce' --header 'Content-Type: application/jso
         {
             "topic": "topic-1",
             "messages": [
-                {
-                    "payload": "Test data 1"
-                },
-                {
-                    "payload": "Test data 1"
-                },
+                "Test data 1",
+                "Test data 2",
                 ...
             ]
         },
         {
             "topic": "topic-2",
             "messages": [
-                {
-                    "payload": "Test data 2"
-                },
-                {
-                    "payload": "Test data 2"
-                },
+                "Test data 1",
+                "Test data 2",
                 ...
             ]
         }
