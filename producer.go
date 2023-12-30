@@ -15,8 +15,9 @@ import (
 
 var (
 	_                 = godotenv.Load()
-	maxPendingMsgsStr = os.Getenv("MAX_PENDING_MSGS")
-	batchMaxSizeStr   = os.Getenv("BATCHING_MAX_SIZE")
+	deliverAfter, _   = strconv.ParseInt(os.Getenv("DELIVER_AFTER_MS"), 10, 64)
+	maxPendingMsgs, _ = strconv.ParseInt(os.Getenv("MAX_PENDING_MSGS"), 10, 64)
+	batchMaxSize, _   = strconv.ParseInt(os.Getenv("BATCHING_MAX_SIZE"), 10, 64)
 )
 
 // TopicProducer producer with a specific topic
@@ -61,8 +62,9 @@ func (tp *TopicProducer) SendMessages(msgs []string) {
 		tp.Producer.SendAsync(
 			ctx,
 			&pulsar.ProducerMessage{
-				Payload:     []byte(m),
-				Transaction: tp.trx,
+				Payload:      []byte(m),
+				Transaction:  tp.trx,
+				DeliverAfter: time.Millisecond * time.Duration(deliverAfter),
 			},
 			func(id pulsar.MessageID, message *pulsar.ProducerMessage, err error) {
 				defer wg.Done()
@@ -92,18 +94,6 @@ func NewTopicProducer(opt *TopicProducerOptions) (*TopicProducer, error) {
 		log.
 			Panic().
 			Msg("topic producer options cannot be nil")
-	}
-
-	maxPendingMsgs, err := strconv.ParseInt(maxPendingMsgsStr, 10, 64)
-	if err != nil {
-		log.Error().Err(err).Msg("failed to parse `MAX_PENDING_MSGS`")
-		return nil, err
-	}
-
-	batchMaxSize, err := strconv.ParseInt(batchMaxSizeStr, 10, 64)
-	if err != nil {
-		log.Error().Err(err).Msg("failed to parse `BATCHING_MAX_SIZE`")
-		return nil, err
 	}
 
 	p, err := opt.Client.CreateProducer(pulsar.ProducerOptions{
